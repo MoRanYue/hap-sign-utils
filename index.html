@@ -234,14 +234,14 @@
 
 <script>
   // 显示文件名
-  document.getElementById('appInput').addEventListener('change', function (e) {
-    const fileName = e.target.files[0]?.name || '未选择文件';
-    document.getElementById('appFileName').textContent = fileName;
+  document.getElementById("appInput").addEventListener("change", function (e) {
+    const fileName = e.target.files[0]?.name || "未选择文件";
+    document.getElementById("appFileName").textContent = fileName;
   });
 
-  document.getElementById('p7bInput').addEventListener('change', function (e) {
-    const fileName = e.target.files[0]?.name || '未选择文件';
-    document.getElementById('p7bFileName').textContent = fileName;
+  document.getElementById("p7bInput").addEventListener("change", function (e) {
+    const fileName = e.target.files[0]?.name || "未选择文件";
+    document.getElementById("p7bFileName").textContent = fileName;
   });
 </script>
 
@@ -258,7 +258,7 @@
 
 
 <script type="module">
-  import * as jsrsasign from 'https://cdn.jsdelivr.net/npm/jsrsasign@11.1.0/+esm';
+  import * as jsrsasign from "https://cdn.jsdelivr.net/npm/jsrsasign@11.1.0/+esm";
   import * as JSZipModule from "https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm";
   const JSZip = JSZipModule.default;
 
@@ -269,7 +269,7 @@
 
   // const p12Blob = base64ToBlob(p12Base64);
   const p12Uint8Array = base64ToUint8Array(p12Base64);
-  document.querySelector("#downloadCsr").href = URL.createObjectURL(new Blob([csrFile], { type: "text/plain" }));
+  document.querySelector("#downloadCsr").href = URL.createObjectURL(new Blob([csrFile], { type: "application/octet-stream" }));
 
   window.signHap = signHap;
   window.autoBundleName = autoBundleName;
@@ -353,11 +353,11 @@
         cerStr,
         signTimeStr
       });
-      const signedBinBlob = new Blob([signedBinUint8Array], { type: 'application/octet-stream' });
+      const signedBinBlob = new Blob([signedBinUint8Array], { type: "application/octet-stream" });
 
       const signedHap = new JSZip();
       signedHap.file("signed.bin", signedBinBlob, { binary: true, compression: "STORE" });
-      const signedHapBlob = await signedHap.generateAsync({ type: "blob" });
+      const signedHapBlob = new Blob([await signedHap.generateAsync({ type: "blob" })], { type: "application/octet-stream" });
 
       alert("签名完成");
       const a = document.createElement("a");
@@ -562,7 +562,7 @@
             type: "1.2.840.113549.1.7.1"
           }, {
             attr: "messageDigest",
-            hex: uint8ArrayToHex(new Uint8Array(await crypto.subtle.digest('SHA-256', dataUint8Array)))
+            hex: uint8ArrayToHex(new Uint8Array(await crypto.subtle.digest("SHA-256", dataUint8Array)))
           }]
         },
         sigalg: "SHA256withECDSA",
@@ -611,7 +611,7 @@
     // 分块计算 SHA256
     for (let offset = 0; offset < bytes.length; offset += chunkSize) {
       const chunk = bytes.subarray(offset, offset + chunkSize);
-      const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', chunk))
+      const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", chunk))
       hashBuffer.set(digest, Math.floor(offset / chunkSize) * 32);
     }
 
@@ -647,8 +647,8 @@
 
   function uint8ArrayToHex(uint8Array) {
     return Array.from(uint8Array)
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
+      .map(b => b.toString(16).padStart(2, "0"))
+      .join("");
   }
 
   function hexToUint8Array(hex) {
@@ -656,16 +656,16 @@
   }
 
   // function base64ToBlob(base64) {
-  //   return new Blob([base64ToUint8Array(base64)], { type: 'application/octet-stream' });
+  //   return new Blob([base64ToUint8Array(base64)], { type: "application/octet-stream" });
   // }
 
   function getTimeStr(date) {
     const year = date.getUTCFullYear();
-    const month = ('0' + (date.getUTCMonth() + 1)).slice(-2);
-    const day = ('0' + date.getUTCDate()).slice(-2);
-    const hours = ('0' + date.getUTCHours()).slice(-2);
-    const minutes = ('0' + date.getUTCMinutes()).slice(-2);
-    const seconds = ('0' + date.getUTCSeconds()).slice(-2);
+    const month = ("0" + (date.getUTCMonth() + 1)).slice(-2);
+    const day = ("0" + date.getUTCDate()).slice(-2);
+    const hours = ("0" + date.getUTCHours()).slice(-2);
+    const minutes = ("0" + date.getUTCMinutes()).slice(-2);
+    const seconds = ("0" + date.getUTCSeconds()).slice(-2);
     return `${year}${month}${day}${hours}${minutes}${seconds}`;
   }
 
