@@ -275,7 +275,7 @@
   window.autoBundleName = autoBundleName;
 
   async function autoBundleName() {
-    const bundleName = "com.example.hapsign" + getTimeStr(new Date(new Date().getTime() + 8 * 3600 * 1000));
+    const bundleName = "hap.sign." + getTimeStr(new Date(new Date().getTime() + 8 * 3600 * 1000));
     try {
       await copyToClipboard(bundleName);
     } catch {
