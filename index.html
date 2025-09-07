@@ -327,10 +327,11 @@
       const hapBlob = await hapEntry.async("blob");
       const hapLoad = await JSZip.loadAsync(hapBlob);
 
-      // 修改 config.json 中的包名
+      // 修改 config.json 中的包名、version code
       try {
         const config = JSON.parse(await (hapLoad.file("config.json")).async("text"));
         config.app.bundleName = bundleName;
+        config.app.version.code = 0;
         hapLoad.file("config.json", JSON.stringify(config));
       } catch (e) {
         console.error(e);
