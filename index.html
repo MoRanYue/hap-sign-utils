@@ -1,4 +1,4 @@
-<html>
+<html lang="zh-CN">
 
 <head>
   <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,13 +57,23 @@
     </div>
   </div>
 
-  <a href="https://github.com/kqakqakqa/hap-sign-utils" class="github-link" target="_blank" rel="noopener">
-    <svg viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" />
-    </svg>
-    <span>查看源代码仓库</span>
-  </a>
+  <div class="links">
+    <a href="https://github.com/kqakqakqa/hap-sign-utils" class="link github-link" target="_blank" rel="noopener">
+      <svg class="link-icon" viewBox="0 0 98 96">
+        <path
+          d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" />
+      </svg>
+      <span>查看源代码仓库</span>
+    </a>
+
+    <a href="https://afdian.com/a/kqakqakqa" class="link afdian-link" target="_blank" rel="noopener">
+      <svg class="link-icon" viewBox="0 0 1000 1000">
+        <path
+          d="m541.35455 52.769231q7 0 13 3 10 4 15 13.5 5 9.5 4 19.5l-37 297h337q10 0 17.5 5 7.5 5 11.5 13 4 8 3 17.5 -1 9.5 -7 16.5l-415 498q-7 8 -17.5 10.5 -10.5 2.5 -20 -1.5 -9.5 -4 -15 -13.5 -5.5 -9.5 -4.5 -19.5l37 -296h-337q-9 0 -17 -5 -8 -5 -12 -13.5 -4 -8.5 -2.5 -18 1.5 -9.5 7.5 -16.5l414 -498q10 -12 25 -12zm264 397h-305q-15 0 -24.5 -11 -9.5 -11 -7.5 -25l28 -224 -302 362h306q14 0 23.5 10.5 9.5 10.5 7.5 25.5l-27 223z" />
+      </svg>
+      <span>作者的爱发电主页</span>
+    </a>
+  </div>
 
 </body>
 
@@ -208,7 +218,15 @@
     font-size: 1rem;
   }
 
-  .github-link {
+  .links {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .link {
     display: flex;
     align-items: center;
     padding: 0.5rem 1rem;
@@ -221,14 +239,19 @@
     border: 1px solid transparent;
   }
 
-  .github-link svg {
+  .link-icon {
     height: 1.2rem;
     fill: #666;
   }
 
   .github-link:hover {
-    border-color: #70a9ff;
-    background-color: #f0f6ff;
+    border-color: #5599ff;
+    background: #5599ff13;
+  }
+
+  .afdian-link:hover {
+    border-color: #946ce6;
+    background: #946ce613;
   }
 </style>
 
@@ -265,6 +288,7 @@
   const csrFile = "-----BEGIN NEW CERTIFICATE REQUEST-----\nMIH+MIGkAgEAMBIxEDAOBgNVBAMMB2RlZmF1bHQwWTATBgcqhkjOPQIBBggqhkjO\nPQMBBwNCAAR1VIBWnhZckS1Xr/GvhEpgr+HpSdlP48szkRw5xes+5+D2pAXts0Or\nsXQ4Y0u/RIWqF7oF7tAtSt92rlhsGUSLoDAwLgYJKoZIhvcNAQkOMSEwHzAdBgNV\nHQ4EFgQUIHP+3xCgek7Vv5FaHLI4sMRIpVMwCgYIKoZIzj0EAwIDSQAwRgIhAPIs\n6WmMIQ+uLZAKEC4scBCNMXa2kZmlZcjFZo/L8S+6AiEAsbsz8jEJMXEL0SNXTAi3\nKSHU01xBcwv1Q2Oi5zRlxos=\n-----END NEW CERTIFICATE REQUEST-----";
   const p12Base64 = "MIIECwIBAzCCA8EGCSqGSIb3DQEHAaCCA7IEggOuMIIDqjCCAjoGCSqGSIb3DQEHBqCCAiswggInAgEAMIICIAYJKoZIhvcNAQcBMF8GCSqGSIb3DQEFDTBSMDEGCSqGSIb3DQEFDDAkBBCdTmEgtBxvOTX+9n4TAKrgAgJOIDAMBggqhkiG9w0CCQUAMB0GCWCGSAFlAwQBKgQQfKQ2yt2YyfKFpvoOTpoAsICCAbDwou30DZxuwZBAO41mDCWKytcsqR11o80oqFeLETtx+2ox/VEcjTtgVQ1BlxpUsKLqQUQw5ii/2yIaXVwAMBCRfbbu3D6Ltd2gFaYnsUCZlIUZ2mAeJvR6n6qh57UXWF94HuoZYdsbLWFDEK8TcTeDHdmsKvnbMw4UGwFHhLIUOQ3NGubmxrxMJHij8LeAdnwaQXX51OC2P8mSuDVvrexcAiYALnGBoTIfjZ3N8LwjdUR+pU2PRuEuthsDuRK8nzP5+wLuc2wh5wFU7utC5acerAWx1pB4uBXOSwd5nTkufxd/gCmLa3oMM8IVHdK9cr4ygLfZh+rLQRvSJKVQH5w4zNAvdgYZYMG+1sWmUFr4ul3Hlr6nz5ACfr8CyXhDSIt9r8TaGW/r0OaSR7rdQ/z0jaZVfp3cVrzzHUsjch0oeGpCl3bOwYnG0uth7RNCG/9SZEzSbPzyQe7Hkk+mpLu/7FxE6K/mtRgT+T0yWmABWfy0dpd5qlsh3T9k+jPyjo3vvzDv8WMkzb7uh1CjET7HrSGJ+jgrmBkGZxI4SRf48gwpqtTpbCh/xxOQvBPFHnIwggFoBgkqhkiG9w0BBwGgggFZBIIBVTCCAVEwggFNBgsqhkiG9w0BDAoBAqCB9zCB9DBfBgkqhkiG9w0BBQ0wUjAxBgkqhkiG9w0BBQwwJAQQqe5iktWgadtS0Utmte0HAQICTiAwDAYIKoZIhvcNAgkFADAdBglghkgBZQMEASoEEHurTSYsJqy7fq3cbNxAkEwEgZAkb/2AE4rhboaGyTFnPrTdUV7sV3na9rayFaCzTehnnGlhIKjjcd6Fc9U1h71pgOiGITQsCxR86GRsenrZaHjpz+4Rc/xgbhUgSV1WtIhPiBHewNNyC6ObtxMwJnbWYG2vS2cq1hb5iFVyLSynSvw4j1IpOUemCdnedGQVsP6ej4/vtC69l7P6vFjp9YC5+IcxRDAdBgkqhkiG9w0BCRQxEB4OAGQAZQBmAGEAdQBsAHQwIwYJKoZIhvcNAQkVMRYEFKYzJncFFDQb5B+oRJGbVy4krtmmMEEwMTANBglghkgBZQMEAgEFAAQg/jx8QAXgx4ujLx9flAjosCoFRs+7HIFEGkc43Kj40yMECHgv6uu9jsAZAgIIAA==";
   const p12Pem = "-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgBCsp9yrXDMGvvKib\nUddAWZEqNGZmyELWeaJM19FbjGmhRANCAAR1VIBWnhZckS1Xr/GvhEpgr+HpSdlP\n48szkRw5xes+5+D2pAXts0OrsXQ4Y0u/RIWqF7oF7tAtSt92rlhsGUSL\n-----END PRIVATE KEY-----";
+  // https://pki.consumer.huawei.com/ca#/
   const cerRoot = "-----BEGIN CERTIFICATE-----\nMIICGjCCAaGgAwIBAgIIShhpn519jNAwCgYIKoZIzj0EAwMwUzELMAkGA1UEBhMC\nQ04xDzANBgNVBAoMBkh1YXdlaTETMBEGA1UECwwKSHVhd2VpIENCRzEeMBwGA1UE\nAwwVSHVhd2VpIENCRyBSb290IENBIEcyMB4XDTIwMDMxNjAzMDQzOVoXDTQ5MDMx\nNjAzMDQzOVowUzELMAkGA1UEBhMCQ04xDzANBgNVBAoMBkh1YXdlaTETMBEGA1UE\nCwwKSHVhd2VpIENCRzEeMBwGA1UEAwwVSHVhd2VpIENCRyBSb290IENBIEcyMHYw\nEAYHKoZIzj0CAQYFK4EEACIDYgAEWidkGnDSOw3/HE2y2GHl+fpWBIa5S+IlnNrs\nGUvwC1I2QWvtqCHWmwFlFK95zKXiM8s9yV3VVXh7ivN8ZJO3SC5N1TCrvB2lpHMB\nwcz4DA0kgHCMm/wDec6kOHx1xvCRo0IwQDAOBgNVHQ8BAf8EBAMCAQYwDwYDVR0T\nAQH/BAUwAwEB/zAdBgNVHQ4EFgQUo45a9Vq8cYwqaiVyfkiS4pLcIAAwCgYIKoZI\nzj0EAwMDZwAwZAIwMypeB7P0IbY7c6gpWcClhRznOJFj8uavrNu2PIoz9KIqr3jn\nBlBHJs0myI7ntYpEAjBbm8eDMZY5zq5iMZUC6H7UzYSix4Uy1YlsLVV738PtKP9h\nFTjgDHctXJlC5L7+ZDY=\n-----END CERTIFICATE-----\n-----BEGIN CERTIFICATE-----\nMIIDATCCAoigAwIBAgIIXmuDXbWpOB8wCgYIKoZIzj0EAwMwUzELMAkGA1UEBhMC\nQ04xDzANBgNVBAoMBkh1YXdlaTETMBEGA1UECwwKSHVhd2VpIENCRzEeMBwGA1UE\nAwwVSHVhd2VpIENCRyBSb290IENBIEcyMB4XDTIwMDcwOTAyMDQyNFoXDTMwMDcw\nNzAyMDQyNFowYjELMAkGA1UEBgwCQ04xDzANBgNVBAoMBkh1YXdlaTETMBEGA1UE\nCwwKSHVhd2VpIENCRzEtMCsGA1UEAwwkSHVhd2VpIENCRyBEZXZlbG9wZXIgUmVs\nYXRpb25zIENBIEcyMHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE65LdoIZh1hlpZ2gP\nbJ6gPhHsvYSRe22KETgdqeVeYnrbRHI9wsPT6RGYS+pU4mPl6wxzgDMqN6SY/BoZ\nluhkE1PzaHoPoNIWIq0O33hpyKyyYwAacIUEjYurkw1E9r9no4IBGDCCARQwHwYD\nVR0jBBgwFoAUo45a9Vq8cYwqaiVyfkiS4pLcIAAwHQYDVR0OBBYEFNtek7Ij6NDk\n/nF6Zumkc0dbf/NeMEYGA1UdIAQ/MD0wOwYEVR0gADAzMDEGCCsGAQUFBwIBFiVo\ndHRwOi8vY3BraS1jYXdlYi5odWF3ZWkuY29tL2Nwa2kvY3BzMBIGA1UdEwEB/wQI\nMAYBAf8CAQAwDgYDVR0PAQH/BAQDAgEGMGYGA1UdHwRfMF0wW6BZoFeGVWh0dHA6\nLy9jcGtpLWNhd2ViLmh1YXdlaS5jb20vY3BraS9zZXJ2bGV0L2NybEZpbGVEb3du\nLmNybD9jZXJ0eXBlPTEwJi9yb290X2cyX2NybC5jcmwwCgYIKoZIzj0EAwMDZwAw\nZAIwWO1X5q2MdfpR1Q237GpUHGbL1C13rGyFg2p3AYo44FpZ2/A9ss0wOHKM4KDl\nZPqdAjBLkf8NPZy7KVog98+iCTLq35DJ2ZVxkCxknA9YhiHVyXf4HPm4JlT7rW7o\nQ+FzM3c=\n-----END CERTIFICATE-----\n"
 
   // const p12Blob = base64ToBlob(p12Base64);
