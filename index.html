@@ -67,12 +67,14 @@
     </a>
 
     <a href="https://afdian.com/a/kqakqakqa" class="link afdian-link" target="_blank" rel="noopener">
-      <svg class="link-icon" viewBox="0 0 1000 1000">
-        <path
-          d="m541.35455 52.769231q7 0 13 3 10 4 15 13.5 5 9.5 4 19.5l-37 297h337q10 0 17.5 5 7.5 5 11.5 13 4 8 3 17.5 -1 9.5 -7 16.5l-415 498q-7 8 -17.5 10.5 -10.5 2.5 -20 -1.5 -9.5 -4 -15 -13.5 -5.5 -9.5 -4.5 -19.5l37 -296h-337q-9 0 -17 -5 -8 -5 -12 -13.5 -4 -8.5 -2.5 -18 1.5 -9.5 7.5 -16.5l414 -498q10 -12 25 -12zm264 397h-305q-15 0 -24.5 -11 -9.5 -11 -7.5 -25l28 -224 -302 362h306q14 0 23.5 10.5 9.5 10.5 7.5 25.5l-27 223z" />
-      </svg>
+      <span class="link-icon">⚡️</span>
       <span>作者的爱发电主页</span>
     </a>
+
+    <button class="link github-link" onclick="downloadPage()" type="button">
+      <span class="link-icon">📥</span>
+      <span>保存此网页的副本</span>
+    </button>
   </div>
 
 </body>
@@ -220,27 +222,37 @@
 
   .links {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 0.5rem;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
   }
 
   .link {
     display: flex;
+    justify-content: center;
     align-items: center;
     padding: 0.5rem 1rem;
     gap: 0.25rem;
     color: #666;
+    background: unset;
     text-decoration: none;
     font-size: 1rem;
     transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
     border-radius: 8px;
     border: 1px solid transparent;
+    cursor: pointer;
   }
 
   .link-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     height: 1.2rem;
+    width: 1.2rem;
+    font-size: 1.2rem;
+    line-height: 1;
     fill: #666;
   }
 
@@ -297,9 +309,10 @@
 
   window.signHap = signHap;
   window.autoBundleName = autoBundleName;
+  window.downloadPage = downloadPage;
 
   async function autoBundleName() {
-    const bundleName = "hap.sign." + getTimeStr(new Date(new Date().getTime() + 8 * 3600 * 1000));
+    const bundleName = "hap.sign." + getTimeStr();
     try {
       await copyToClipboard(bundleName);
     } catch {
@@ -307,6 +320,27 @@
       return;
     }
     alert("已复制到剪贴板");
+  }
+
+  async function downloadPage() {
+    try {
+      const indexResp = await fetch("index.html");
+      const indexHtml = await indexResp.text();
+
+      const licenseResp = await fetch("LICENSE");
+      const licenseText = await licenseResp.text();
+
+      const zip = new JSZip();
+      zip.file("index.html", indexHtml);
+      zip.file("LICENSE", licenseText);
+
+      const blob = await zip.generateAsync({ type: "blob" });
+      const filename = "hap-sign-utils副本" + getTimeStr() + ".zip";
+      downloadBlob(blob, filename);
+    } catch (e) {
+      alert("下载失败：" + e.message);
+      throw e;
+    }
   }
 
   async function signHap() {
@@ -337,7 +371,7 @@
       console.log("bundleName: ", bundleName);
 
       const signTime = p7bEContent.validity["not-before"];
-      const signTimeStr = getTimeStr(new Date(signTime * 1000)) + "Z";
+      const signTimeStr = getTimeStr(new Date((signTime + 1) * 1000)) + "Z";
       console.log("signTime: ", signTime, signTimeStr);
 
       const cerLeaf = p7bEContent["bundle-info"]["development-certificate"];
@@ -358,8 +392,8 @@
         config.app.version.code = 0;
         hapLoad.file("config.json", JSON.stringify(config));
       } catch (e) {
-        console.error(e);
-        return alert("config.json 解析失败: " + e.message);
+        alert("config.json 解析失败：" + e.message);
+        throw e;
       }
 
       // const modifiedHapUint8Array = await hapLoad.generateAsync({
@@ -383,12 +417,10 @@
       const signedHap = new JSZip();
       signedHap.file("signed.bin", signedBinBlob, { binary: true, compression: "STORE" });
       const signedHapBlob = new Blob([await signedHap.generateAsync({ type: "blob" })], { type: "application/octet-stream" });
+      const fileName = appFile.name.replace(/\.app$/, "") + ".hap";
 
       alert("签名完成");
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(signedHapBlob);
-      a.download = appFile.name.replace(/\.app$/, "") + ".hap";
-      a.click();
+      downloadBlob(signedHapBlob, fileName);
     } catch (e) {
       alert("签名失败：" + e.message);
       throw e;
@@ -684,7 +716,7 @@
   //   return new Blob([base64ToUint8Array(base64)], { type: "application/octet-stream" });
   // }
 
-  function getTimeStr(date) {
+  function getTimeStr(date = new Date(new Date().getTime() + 8 * 3600 * 1000)) {
     const year = date.getUTCFullYear();
     const month = ("0" + (date.getUTCMonth() + 1)).slice(-2);
     const day = ("0" + date.getUTCDate()).slice(-2);
@@ -712,6 +744,15 @@
       document.execCommand("Copy");
       textArea.remove();
     }
+  }
+
+  function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 </script>
 
