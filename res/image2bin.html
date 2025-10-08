@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>image2bin</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    input {
+      padding: 0.5rem;
+      font-size: 1rem;
+      width: 8rem;
+    }
+
+    canvas {
+      display: block;
+      border: 0.125rem solid #999;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>图片转bin</h1>
+  <input id="width" type="number" placeholder="缩放宽度 (px)" />
+  <input id="height" type="number" placeholder="缩放高度 (px)" />
+  <canvas id="canvas" width="256" height="256" title="点击上传图片"></canvas>
+  <input id="fileInput" type="file" accept="image/*" hidden>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const fileInput = document.getElementById("fileInput");
+    let imgName = "output";
+
+    canvas.addEventListener("click", () => fileInput.click());
+
+    fileInput.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      imgName = file.name.replace(/\.[^.]+$/, "");
+
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.src = url;
+      await img.decode();
+
+      const width = parseInt(document.getElementById("width").value) || img.width;
+      const height = parseInt(document.getElementById("height").value) || img.height;
+
+      canvas.width = width;
+      canvas.height = height;
+      ctx.drawImage(img, 0, 0, width, height);
+
+      convertToBinAndDownload(width, height);
+    });
+
+    function convertToBinAndDownload(width, height) {
+      const imageData = ctx.getImageData(0, 0, width, height);
+      const data = imageData.data;
+
+      const headerSize = 8;
+      const pixelSize = 4;
+      const buffer = new ArrayBuffer(headerSize + width * height * pixelSize);
+      const view = new DataView(buffer);
+
+      // Header
+      let offset = 0;
+      view.setUint32(offset, 256, true); offset += 4;
+      const encodedWH = (width << 0) + (height << 16);
+      view.setUint32(offset, encodedWH, true); offset += 4;
+
+      // Pixels (B, G, R, A)
+      for (let i = 0; i < data.length; i += 4) {
+        view.setUint8(offset++, data[i + 2]); // R
+        view.setUint8(offset++, data[i + 1]); // G
+        view.setUint8(offset++, data[i + 0]); // B
+        view.setUint8(offset++, data[i + 3]); // A
+      }
+
+      const blob = new Blob([buffer], { type: "application/octet-stream" });
+      const link = document.createElement("a");
+      link.download = `${imgName}.bin.mp3`;
+      link.href = URL.createObjectURL(blob);
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+  </script>
+</body>
+
+</html>
