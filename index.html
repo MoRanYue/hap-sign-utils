@@ -278,6 +278,17 @@
     const fileName = e.target.files[0]?.name || "未选择文件";
     document.getElementById("p7bFileName").textContent = fileName;
   });
+
+  window.signHap = notReady;
+  window.autoBundleName = notReady;
+  window.downloadPage = notReady;
+
+  function notReady() {
+    alert("页面还没有加载完成");
+  }
+
+  const csrFile = "-----BEGIN NEW CERTIFICATE REQUEST-----\nMIH+MIGkAgEAMBIxEDAOBgNVBAMMB2RlZmF1bHQwWTATBgcqhkjOPQIBBggqhkjO\nPQMBBwNCAAR1VIBWnhZckS1Xr/GvhEpgr+HpSdlP48szkRw5xes+5+D2pAXts0Or\nsXQ4Y0u/RIWqF7oF7tAtSt92rlhsGUSLoDAwLgYJKoZIhvcNAQkOMSEwHzAdBgNV\nHQ4EFgQUIHP+3xCgek7Vv5FaHLI4sMRIpVMwCgYIKoZIzj0EAwIDSQAwRgIhAPIs\n6WmMIQ+uLZAKEC4scBCNMXa2kZmlZcjFZo/L8S+6AiEAsbsz8jEJMXEL0SNXTAi3\nKSHU01xBcwv1Q2Oi5zRlxos=\n-----END NEW CERTIFICATE REQUEST-----";
+  document.querySelector("#downloadCsr").href = URL.createObjectURL(new Blob([csrFile], { type: "application/octet-stream" }));
 </script>
 
 
@@ -297,7 +308,6 @@
   import * as JSZipModule from "https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm";
   const JSZip = JSZipModule.default;
 
-  const csrFile = "-----BEGIN NEW CERTIFICATE REQUEST-----\nMIH+MIGkAgEAMBIxEDAOBgNVBAMMB2RlZmF1bHQwWTATBgcqhkjOPQIBBggqhkjO\nPQMBBwNCAAR1VIBWnhZckS1Xr/GvhEpgr+HpSdlP48szkRw5xes+5+D2pAXts0Or\nsXQ4Y0u/RIWqF7oF7tAtSt92rlhsGUSLoDAwLgYJKoZIhvcNAQkOMSEwHzAdBgNV\nHQ4EFgQUIHP+3xCgek7Vv5FaHLI4sMRIpVMwCgYIKoZIzj0EAwIDSQAwRgIhAPIs\n6WmMIQ+uLZAKEC4scBCNMXa2kZmlZcjFZo/L8S+6AiEAsbsz8jEJMXEL0SNXTAi3\nKSHU01xBcwv1Q2Oi5zRlxos=\n-----END NEW CERTIFICATE REQUEST-----";
   const p12Base64 = "MIIECwIBAzCCA8EGCSqGSIb3DQEHAaCCA7IEggOuMIIDqjCCAjoGCSqGSIb3DQEHBqCCAiswggInAgEAMIICIAYJKoZIhvcNAQcBMF8GCSqGSIb3DQEFDTBSMDEGCSqGSIb3DQEFDDAkBBCdTmEgtBxvOTX+9n4TAKrgAgJOIDAMBggqhkiG9w0CCQUAMB0GCWCGSAFlAwQBKgQQfKQ2yt2YyfKFpvoOTpoAsICCAbDwou30DZxuwZBAO41mDCWKytcsqR11o80oqFeLETtx+2ox/VEcjTtgVQ1BlxpUsKLqQUQw5ii/2yIaXVwAMBCRfbbu3D6Ltd2gFaYnsUCZlIUZ2mAeJvR6n6qh57UXWF94HuoZYdsbLWFDEK8TcTeDHdmsKvnbMw4UGwFHhLIUOQ3NGubmxrxMJHij8LeAdnwaQXX51OC2P8mSuDVvrexcAiYALnGBoTIfjZ3N8LwjdUR+pU2PRuEuthsDuRK8nzP5+wLuc2wh5wFU7utC5acerAWx1pB4uBXOSwd5nTkufxd/gCmLa3oMM8IVHdK9cr4ygLfZh+rLQRvSJKVQH5w4zNAvdgYZYMG+1sWmUFr4ul3Hlr6nz5ACfr8CyXhDSIt9r8TaGW/r0OaSR7rdQ/z0jaZVfp3cVrzzHUsjch0oeGpCl3bOwYnG0uth7RNCG/9SZEzSbPzyQe7Hkk+mpLu/7FxE6K/mtRgT+T0yWmABWfy0dpd5qlsh3T9k+jPyjo3vvzDv8WMkzb7uh1CjET7HrSGJ+jgrmBkGZxI4SRf48gwpqtTpbCh/xxOQvBPFHnIwggFoBgkqhkiG9w0BBwGgggFZBIIBVTCCAVEwggFNBgsqhkiG9w0BDAoBAqCB9zCB9DBfBgkqhkiG9w0BBQ0wUjAxBgkqhkiG9w0BBQwwJAQQqe5iktWgadtS0Utmte0HAQICTiAwDAYIKoZIhvcNAgkFADAdBglghkgBZQMEASoEEHurTSYsJqy7fq3cbNxAkEwEgZAkb/2AE4rhboaGyTFnPrTdUV7sV3na9rayFaCzTehnnGlhIKjjcd6Fc9U1h71pgOiGITQsCxR86GRsenrZaHjpz+4Rc/xgbhUgSV1WtIhPiBHewNNyC6ObtxMwJnbWYG2vS2cq1hb5iFVyLSynSvw4j1IpOUemCdnedGQVsP6ej4/vtC69l7P6vFjp9YC5+IcxRDAdBgkqhkiG9w0BCRQxEB4OAGQAZQBmAGEAdQBsAHQwIwYJKoZIhvcNAQkVMRYEFKYzJncFFDQb5B+oRJGbVy4krtmmMEEwMTANBglghkgBZQMEAgEFAAQg/jx8QAXgx4ujLx9flAjosCoFRs+7HIFEGkc43Kj40yMECHgv6uu9jsAZAgIIAA==";
   const p12Pem = "-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgBCsp9yrXDMGvvKib\nUddAWZEqNGZmyELWeaJM19FbjGmhRANCAAR1VIBWnhZckS1Xr/GvhEpgr+HpSdlP\n48szkRw5xes+5+D2pAXts0OrsXQ4Y0u/RIWqF7oF7tAtSt92rlhsGUSL\n-----END PRIVATE KEY-----";
   // https://pki.consumer.huawei.com/ca#/
@@ -306,7 +316,6 @@
 
   // const p12Blob = base64ToBlob(p12Base64);
   const p12Uint8Array = base64ToUint8Array(p12Base64);
-  document.querySelector("#downloadCsr").href = URL.createObjectURL(new Blob([csrFile], { type: "application/octet-stream" }));
 
   window.signHap = signHap;
   window.autoBundleName = autoBundleName;
