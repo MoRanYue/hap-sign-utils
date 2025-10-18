@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>image2bin</title>
   <style>
     body {
@@ -11,57 +11,181 @@
       flex-direction: column;
       align-items: center;
       gap: 1rem;
-    }
-
-    input {
-      padding: 0.5rem;
-      font-size: 1rem;
-      width: 8rem;
+      font-family: sans-serif;
+      margin: 2rem;
     }
 
     canvas {
       display: block;
-      border: 0.125rem solid #999;
+      border: 2px solid #999;
       cursor: pointer;
+      background: #f9f9f9;
+    }
+
+    input,
+    select,
+    button {
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .preset-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      max-width: 400px;
+    }
+
+    .preset {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      background: #fafafa;
+      transition: 0.2s;
+    }
+
+    .preset:hover {
+      background: #e6f0ff;
+      border-color: #66a3ff;
+    }
+
+    #fileInfo {
+      color: #555;
     }
   </style>
 </head>
 
 <body>
   <h1>图片转bin</h1>
-  <input id="width" type="number" placeholder="缩放宽度 (px)" />
-  <input id="height" type="number" placeholder="缩放高度 (px)" />
+
+  <div class="preset-container">
+    <div class="preset" data-w="408" data-h="480">FIT3,4 D2</div>
+    <div class="preset" data-w="466" data-h="466">GT3,4,5,6</div>
+    <div class="preset" data-w="336" data-h="480">FIT2</div>
+    <div class="preset" data-w="454" data-h="454">GT2 GS3 GSPro</div>
+    <div class="preset" data-w="390" data-h="390">GT2(42mm)</div>
+    <div class="preset" data-w="280" data-h="456">D</div>
+  </div>
+
+  <div>
+    <input id="width" type="number" placeholder="宽度 (px)" />
+    <input id="height" type="number" placeholder="高度 (px)" />
+  </div>
+
+  <div>
+    <label for="fitMode">缩放方式：</label>
+    <select id="fitMode">
+      <option value="fill">填充</option>
+      <option value="contain">适应</option>
+      <option value="stretch">拉伸</option>
+      <option value="center">居中</option>
+      <option value="tile">平铺</option>
+    </select>
+  </div>
+
   <canvas id="canvas" width="256" height="256" title="点击上传图片"></canvas>
-  <input id="fileInput" type="file" accept="image/*" hidden>
+  <input id="fileInput" type="file" accept="image/*" hidden />
+  <div id="fileInfo">未选择文件</div>
+
+  <button id="convertBtn" disabled>转换并下载</button>
 
   <script>
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
     const fileInput = document.getElementById("fileInput");
-    let imgName = "output";
+    const fileInfo = document.getElementById("fileInfo");
+    const convertBtn = document.getElementById("convertBtn");
+    const fitMode = document.getElementById("fitMode");
 
+    let imgName = "";
+    let img = null;
+
+    // 点击画布上传
     canvas.addEventListener("click", () => fileInput.click());
 
+    // 上传图片
     fileInput.addEventListener("change", async (e) => {
       const file = e.target.files[0];
       if (!file) return;
       imgName = file.name.replace(/\.[^.]+$/, "");
-
       const url = URL.createObjectURL(file);
-      const img = new Image();
+      img = new Image();
       img.src = url;
       await img.decode();
+      fileInfo.textContent = `已选择：${file.name} (${img.width}×${img.height})`;
+      convertBtn.disabled = false;
+      URL.revokeObjectURL(url);
+    });
 
+    // 预设分辨率卡片点击
+    document.querySelectorAll(".preset").forEach(el => {
+      el.addEventListener("click", () => {
+        document.getElementById("width").value = el.dataset.w;
+        document.getElementById("height").value = el.dataset.h;
+      });
+    });
+
+    // 转换按钮
+    convertBtn.addEventListener("click", () => {
+      if (!img) {
+        alert("请先上传图片！");
+        return;
+      }
       const width = parseInt(document.getElementById("width").value) || img.width;
       const height = parseInt(document.getElementById("height").value) || img.height;
+      const mode = fitMode.value;
 
       canvas.width = width;
       canvas.height = height;
-      ctx.drawImage(img, 0, 0, width, height);
 
+      ctx.clearRect(0, 0, width, height);
+      drawImageFit(ctx, img, width, height, mode);
       convertToBinAndDownload(width, height);
     });
 
+    // 绘制模式
+    function drawImageFit(ctx, img, width, height, mode) {
+      const iw = img.width;
+      const ih = img.height;
+
+      switch (mode) {
+        case "fill": // 等比裁切填满
+          {
+            const scale = Math.max(width / iw, height / ih);
+            const sw = iw * scale;
+            const sh = ih * scale;
+            const x = (width - sw) / 2;
+            const y = (height - sh) / 2;
+            ctx.drawImage(img, x, y, sw, sh);
+          }
+          break;
+        case "contain": // 等比适应
+          {
+            const scale = Math.min(width / iw, height / ih);
+            const sw = iw * scale;
+            const sh = ih * scale;
+            const x = (width - sw) / 2;
+            const y = (height - sh) / 2;
+            ctx.drawImage(img, x, y, sw, sh);
+          }
+          break;
+        case "stretch": // 拉伸
+          ctx.drawImage(img, 0, 0, width, height);
+          break;
+        case "center": // 居中原始大小
+          ctx.drawImage(img, (width - iw) / 2, (height - ih) / 2);
+          break;
+        case "tile": // 平铺
+          const pattern = ctx.createPattern(img, "repeat");
+          ctx.fillStyle = pattern;
+          ctx.fillRect(0, 0, width, height);
+          break;
+      }
+    }
+
+    // 转bin并下载
     function convertToBinAndDownload(width, height) {
       const imageData = ctx.getImageData(0, 0, width, height);
       const data = imageData.data;
