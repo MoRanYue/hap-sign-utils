@@ -81,9 +81,10 @@
   <div class="items-wrapper fitMode-wrapper">
     <label for="fitMode">缩放方式：</label>
     <select id="fitMode">
-      <option value="fill">填充</option>
+      <option value="original">不缩放</option>
       <option value="contain" selected>适应</option>
       <option value="contain-circle">适应（圆形）</option>
+      <option value="fill">填充</option>
       <option value="stretch">拉伸</option>
       <option value="center">居中</option>
       <option value="repeat">平铺</option>
@@ -147,7 +148,7 @@
 
       ctx.clearRect(0, 0, width, height);
       drawImageFit(ctx, img, width, height, mode);
-      convertToBinAndDownload(width, height);
+      canvasToBinAndDownload();
     });
 
     // 绘制模式
@@ -195,11 +196,26 @@
           ctx.fillStyle = pattern;
           ctx.fillRect(0, 0, width, height);
           break;
+        case "original": {
+          let w = iw;
+          let h = ih;
+          if (w > 2048 || h > 2048) {
+            const scale = Math.min(2048 / w, 2048 / h);
+            w = Math.round(w * scale);
+            h = Math.round(h * scale);
+          }
+          ctx.canvas.width = w;
+          ctx.canvas.height = h;
+          ctx.drawImage(img, 0, 0, w, h);
+          break;
+        }
       }
     }
 
     // 转bin并下载
-    function convertToBinAndDownload(width, height) {
+    function canvasToBinAndDownload() {
+      const width = ctx.canvas.width;
+      const height = ctx.canvas.height;
       const imageData = ctx.getImageData(0, 0, width, height);
       const data = imageData.data;
 
