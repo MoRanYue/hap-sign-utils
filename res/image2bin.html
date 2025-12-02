@@ -5,60 +5,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>image2bin</title>
-  <style>
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      font-family: sans-serif;
-      margin: 2rem;
-    }
-
-    canvas {
-      display: block;
-      border: 2px solid #999;
-      cursor: pointer;
-      background: #f9f9f9;
-    }
-
-    input,
-    select,
-    button {
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
-
-    .items-wrapper {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      justify-content: center;
-      max-width: 100vmin;
-    }
-
-    .preset {
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      background: #fafafa;
-      transition: 0.2s;
-    }
-
-    .preset:hover {
-      background: #e6f0ff;
-      border-color: #66a3ff;
-    }
-
-    .fitMode-wrapper label {
-      align-self: center;
-    }
-
-    #fileInfo {
-      color: #555;
-    }
-  </style>
 </head>
 
 <body>
@@ -91,41 +37,94 @@
     </select>
   </div>
 
-  <canvas id="canvas" width="256" height="256" title="点击上传图片"></canvas>
-  <input id="fileInput" type="file" accept="image/*" hidden />
+  <button id="fileCard" type="button"> 选择图片</button>
+  <input id="fileInput" type="file" accept="image/*" hidden multiple />
   <div id="fileInfo">未选择文件</div>
 
-  <button id="convertBtn" disabled>转换并下载</button>
+  <button id="convertBtn" type="button" disabled>转换并下载</button>
+
+  <div id="canvasList"></div>
+
+  <template id="canvasTemplate">
+    <canvas width="256" height="256" style="display: none;"></canvas>
+  </template>
+
+
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      font-family: sans-serif;
+      margin: 2rem;
+    }
+
+    canvas {
+      display: block;
+      border: 2px solid #999;
+      background: repeating-conic-gradient(#ccc 0 25%, #fff 0 50%) 50% / 1rem 1rem;
+      max-width: 40rem;
+    }
+
+    #canvasList {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    input,
+    select,
+    button {
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .items-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      max-width: 100vmin;
+    }
+
+    .preset {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      background: #fafafa;
+      /* transition: 0.2s; */
+    }
+
+    .preset:hover {
+      background: #e6f0ff;
+      border-color: #66a3ff;
+    }
+
+    .fitMode-wrapper label {
+      align-self: center;
+    }
+
+    #fileInfo {
+      color: #555;
+    }
+  </style>
 
   <script>
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
+    const fileCard = document.getElementById("fileCard");
     const fileInput = document.getElementById("fileInput");
     const fileInfo = document.getElementById("fileInfo");
-    const convertBtn = document.getElementById("convertBtn");
     const fitMode = document.getElementById("fitMode");
+    const convertBtn = document.getElementById("convertBtn");
+    const canvasList = document.getElementById("canvasList");
+    const canvasTemplate = document.getElementById("canvasTemplate");
 
-    let imgName = "";
-    let img = null;
+    let items = []; // [{ imgName, img, canvas, ctx }]
 
-    // 点击画布上传
-    canvas.addEventListener("click", () => fileInput.click());
+    fileCard.addEventListener("click", () => fileInput.click());
 
-    // 上传图片
-    fileInput.addEventListener("change", async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      imgName = file.name.replace(/\.[^.]+$/, "");
-      const url = URL.createObjectURL(file);
-      img = new Image();
-      img.src = url;
-      await img.decode();
-      fileInfo.textContent = `已选择：${file.name} (${img.width}×${img.height})`;
-      convertBtn.disabled = false;
-      URL.revokeObjectURL(url);
-    });
-
-    // 预设分辨率卡片点击
     document.querySelectorAll(".preset").forEach(el => {
       el.addEventListener("click", () => {
         document.getElementById("width").value = el.dataset.w;
@@ -133,25 +132,68 @@
       });
     });
 
-    // 转换按钮
-    convertBtn.addEventListener("click", () => {
-      if (!img) {
-        alert("请先上传图片！");
-        return;
+    // 上传
+    fileInput.addEventListener("change", async (e) => {
+      const files = [...e.target.files];
+
+      items = [];
+      canvasList.innerHTML = "";
+      fileInfo.innerHTML = "未选择文件";
+
+      if (!files.length) return;
+
+      fileInfo.innerHTML = "已选择：";
+
+      for (const file of files) {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.src = url;
+        await img.decode();
+        URL.revokeObjectURL(img.src);
+
+        fileInfo.innerHTML += `<br />${file.name} (${img.width}×${img.height})`;
+
+        const node = canvasTemplate.content.cloneNode(true);
+        const canvas = node.querySelector("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvasList.appendChild(node);
+
+        items.push({
+          imgName: file.name.replace(/\.[^.]+$/, ""),
+          img,
+          canvas,
+          ctx
+        });
       }
-      const width = parseInt(document.getElementById("width").value) || img.width;
-      const height = parseInt(document.getElementById("height").value) || img.height;
-      const mode = fitMode.value;
 
-      canvas.width = width;
-      canvas.height = height;
-
-      ctx.clearRect(0, 0, width, height);
-      drawImageFit(ctx, img, width, height, mode);
-      canvasToBinAndDownload();
+      convertBtn.disabled = false;
     });
 
-    // 绘制模式
+    convertBtn.addEventListener("click", () => {
+      if (!items.length) return;
+
+      const width = parseInt(document.getElementById("width").value) || null;
+      const height = parseInt(document.getElementById("height").value) || null;
+      const mode = (width !== null && height !== null) ? fitMode.value : "original";
+
+      for (const it of items) {
+        const img = it.img;
+        const w = width || img.width;
+        const h = height || img.height;
+
+        it.canvas.width = w;
+        it.canvas.height = h;
+
+        const ctx = it.ctx;
+        ctx.clearRect(0, 0, w, h);
+        drawImageFit(ctx, img, w, h, mode);
+        it.canvas.style.display = "";
+
+        saveCanvasBin(it.canvas, it.imgName);
+      }
+    });
+
     function drawImageFit(ctx, img, width, height, mode) {
       const iw = img.width;
       const ih = img.height;
@@ -164,8 +206,8 @@
           const x = (width - sw) / 2;
           const y = (height - sh) / 2;
           ctx.drawImage(img, x, y, sw, sh);
-        }
           break;
+        }
         case "contain": {
           const scale = Math.min(width / iw, height / ih);
           const sw = iw * scale;
@@ -173,8 +215,8 @@
           const x = (width - sw) / 2;
           const y = (height - sh) / 2;
           ctx.drawImage(img, x, y, sw, sh);
-        }
           break;
+        }
         case "contain-circle": {
           const r = Math.min(width, height) / 2;
           const scale = (2 * r) / Math.sqrt(iw * iw + ih * ih);
@@ -185,17 +227,20 @@
           ctx.drawImage(img, x, y, sw, sh);
           break;
         }
-        case "stretch":
+        case "stretch": {
           ctx.drawImage(img, 0, 0, width, height);
           break;
-        case "center":
+        }
+        case "center": {
           ctx.drawImage(img, (width - iw) / 2, (height - ih) / 2);
           break;
-        case "repeat":
+        }
+        case "repeat": {
           const pattern = ctx.createPattern(img, "repeat");
           ctx.fillStyle = pattern;
           ctx.fillRect(0, 0, width, height);
           break;
+        }
         case "original": {
           let w = iw;
           let h = ih;
@@ -212,12 +257,11 @@
       }
     }
 
-    // 转bin并下载
-    function canvasToBinAndDownload() {
-      const width = ctx.canvas.width;
-      const height = ctx.canvas.height;
-      const imageData = ctx.getImageData(0, 0, width, height);
-      const data = imageData.data;
+    function saveCanvasBin(canvas, name) {
+      const ctx = canvas.getContext("2d");
+      const width = canvas.width;
+      const height = canvas.height;
+      const data = ctx.getImageData(0, 0, width, height).data;
 
       const headerSize = 8;
       const pixelSize = 4;
@@ -240,7 +284,7 @@
 
       const blob = new Blob([buffer], { type: "application/octet-stream" });
       const link = document.createElement("a");
-      link.download = `${imgName}.bin.mp3`;
+      link.download = `${name}.bin.mp3`;
       link.href = URL.createObjectURL(blob);
       link.click();
       URL.revokeObjectURL(link.href);
