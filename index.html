@@ -66,11 +66,6 @@
       <span>查看源代码仓库</span>
     </a>
 
-    <a href="https://afdian.com/a/kqakqakqa" class="link afdian-link" target="_blank" rel="noopener">
-      <span class="link-icon">⚡️</span>
-      <span>作者的爱发电主页</span>
-    </a>
-
     <button class="link github-link" onclick="downloadPage()" type="button">
       <span class="link-icon">📥</span>
       <span>保存此网页的副本</span>
@@ -344,7 +339,7 @@
       zip.file("LICENSE", licenseText);
 
       const blob = await zip.generateAsync({ type: "blob" });
-      const filename = "hap-sign-utils副本" + getTimeStr() + ".zip";
+      const filename = "hap-sign-utils_" + getTimeStr() + ".zip";
       downloadBlob(blob, filename);
     } catch (e) {
       alert("下载失败：" + e.message);
