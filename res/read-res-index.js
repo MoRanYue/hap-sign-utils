@@ -7,36 +7,55 @@ if (!file) {
 }
 
 const buf = fs.readFileSync(file);
-const result = {};
+// u32  recordSize // 不含自身 4 字节
+// u32  resType
+// u32  id
+// u16  valueSize
+// u8[] value      // len = valueSize
+// u16  nameSize
+// u8[] name       // len = nameSize
 
-for (let off = 0; off + 16 < buf.length; off++) {
+const len = buf.length;
+const result = [];
+
+for (let off = 0; off + 16 < len; off++) {
   const recordSize = buf.readUInt32LE(off);
-  if (recordSize <= 8 || off + 4 + recordSize > buf.length) continue;
+  const off_end = off + 4 + recordSize;
+  if (recordSize < 12 || off_end > len) continue;
 
-  let p = off + 4;
+  const off_resType = off + 4;
+  const resType = buf.readUInt32LE(off_resType);
 
-  const resType = buf.readUInt32LE(p); p += 4;
-  const id = buf.readUInt32LE(p); p += 4;
+  const off_id = off + 8;
+  const id = buf.readUInt32LE(off_id);
 
-  const valueSize = buf.readUInt16LE(p); p += 2;
-  if (valueSize === 0 || p + valueSize + 2 > off + 4 + recordSize) continue;
+  const off_valueSize = off + 12;
+  const off_value = off + 14;
 
-  let value = buf.slice(p, p + valueSize).toString("utf8");
-  p += valueSize;
+  const valueSize = buf.readUInt16LE(off_valueSize);
+  // if (valueSize === 0) continue;
 
-  const nameSize = buf.readUInt16LE(p); p += 2;
-  if (nameSize === 0 || p + nameSize > off + 4 + recordSize) continue;
+  const off_nameSize = off + valueSize + 14;
+  const off_name = off + valueSize + 16;
 
-  let name = buf.slice(p, p + nameSize).toString("utf8");
+  if (off_name > off_end) continue;
 
-  // 清理 \0
-  name = name.replace(/\0/g, "");
-  value = value.replace(/\0/g, "");
+  const nameSize = buf.readUInt16LE(off_nameSize);
+  // if (nameSize === 0) continue;
 
-  // 排除 header 垃圾命中
+  if (off_name + nameSize !== off_end) continue;
+
+  const value = buf.slice(off_value, off_value + valueSize).toString("utf8").replace(/\0/g, "");
+  const name = buf.slice(off_name, off_name + nameSize).toString("utf8").replace(/\0/g, "");
+
   if (!name) continue;
 
-  result[name] = value;
+  result.push({
+    resType: resType,
+    id: id,
+    name: name,
+    value: value,
+  });
 }
 
 console.log(result);
