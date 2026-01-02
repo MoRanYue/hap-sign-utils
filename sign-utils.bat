@@ -132,7 +132,7 @@ for %%f in ("%inputFile%") do set "signedHapFile=!hapFolder!!packageName!-signed
 set "signedBinFile=!tmpDir!\!packageName!.bin"
 
 echo 正在签名 bin 文件...
-java -jar "%~dp0res\hap-sign-tool.jar" sign-app ^
+java -jar "%~dp0..\res\hap-sign-tool.jar" sign-app ^
 -mode localSign ^
 -keyAlias !keyAlias! ^
 -keyPwd !keyPwd! ^
