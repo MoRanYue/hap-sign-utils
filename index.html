@@ -391,7 +391,7 @@
         if (binEntry) {
           const binBuf = await binEntry.async("uint8array");
           if (binBuf[0] === 0xBE) {
-            return alert(".hap 文件不需要签名");
+            return alert(".hap 文件不需要再次签名");
           }
         }
 
