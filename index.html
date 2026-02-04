@@ -385,7 +385,18 @@
       // 解压 app、hap
       const appLoad = await JSZip.loadAsync(appFile);
       const hapEntry = Object.values(appLoad.files).find(f => f.name.endsWith(".hap"));
-      if (!hapEntry) return alert(".app 文件中没有找到 .hap 文件");
+      if (!hapEntry) {
+        // 排除 bin
+        const binEntry = Object.values(appLoad.files).find(f => f.name.endsWith(".bin"));
+        if (binEntry) {
+          const binBuf = await binEntry.async("uint8array");
+          if (binBuf[0] === 0xBE) {
+            return alert(".hap 文件不需要签名");
+          }
+        }
+
+        return alert(".app 文件格式不正确：没有找到 .hap 文件");
+      }
 
       const hapBlob = await hapEntry.async("blob");
       const hapLoad = await JSZip.loadAsync(hapBlob);
