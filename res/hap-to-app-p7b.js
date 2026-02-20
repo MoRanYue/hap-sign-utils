@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import JSZip from "./tools/node/node_modules/jszip/dist/jszip.js";
+import JSZip from "../../res/tools/node/node_modules/jszip/dist/jszip.js";
 
 function readUInt32BE(buf) {
   return (buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | buf[3];
